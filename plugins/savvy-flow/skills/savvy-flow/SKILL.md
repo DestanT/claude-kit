@@ -26,6 +26,16 @@ If the tool `mcp__savvy-progress__progress` appears among your tools, including 
 
 When delegating, pass the task's `title` verbatim as the Agent tool's `description` (a return round reuses it too): the agents panel matches runs to planned tasks by it.
 
+## Project thread checklist
+
+In a claude.ai project thread, the mods above cannot draw, but the thread has its own progress card. If a tool whose name ends in `update_progress_checklist` appears among your tools (for example `mcp__hearthbot__update_progress_checklist`), including as a deferred tool, use it as the progress bar; load it first with ToolSearch if it is deferred. Skip silently if it is absent. Each call replaces the whole checklist, so always send every line:
+- the text is a short header (the plan's `title`), a blank line, then one line per worker task in plan order, such as `○ 1. <title> (<tier>)`, starting with `✓` (accepted in review), `✱` (delegated or in review) or `○` (not started);
+- call it after presenting the plan (all `○`), when tasks are delegated (`✱`), each time a task is accepted (`✓`), and when re-planning changes the tasks;
+- if the tool takes a `workers` mapping, map each running worker to its task's step number (counted from 1 over the `✓ ✱ ○` lines), naming the worker as the Agent tool identifies it, so the card shows who is on which step;
+- before the closing report, bring every line to its true end state; a task left out or dropped stays `○` with ` (dropped)` after its title.
+
+Use both this checklist and the progress bar when both tools are present.
+
 ## 1. Understand and plan (orchestrator only)
 
 1. Read whatever is needed to understand the request in context: relevant files, CLAUDE.md, recent git history. Use an Explore subagent (haiku/sonnet) only for wide searches.
